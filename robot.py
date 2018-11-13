@@ -107,26 +107,33 @@ class Robot(wpilib.IterativeRobot):
 	"""
 	open files to write
 	"""
+	"""
 	def open_write(self):
 		self.forward_data = open("/home/lvuser/forward_data.txt", "w")
 		self.angle_data = open("/home/lvuser/angle_data.txt", "w")
+	"""
 
 	"""
 	write data to a file
 	"""
+	"""
 	def write(self, forward, angle):
 		self.forward_data.write(str(forward) + "\n")
 		self.angle_data.write(str(angle) + "\n")
+	"""
 
 	"""
 	open files to read
 	"""
+	"""
 	def open_read(self):
 		self.forward_data = open("/home/lvuser/forward_data.txt", "r")
 		self.angle_data = open("/home/lvuser/angle_data.txt", "r")
+	"""
 
 	"""
 	actually read from files
+	"""
 	"""
 	def read(self):
 		self.forward_powers = self.forward_data.read().splitlines()
@@ -139,6 +146,7 @@ class Robot(wpilib.IterativeRobot):
 			self.angle_powers[i] = float(self.angle_powers[i])
 
 	"""
+	"""
 	run whenever teleop starts
 	"""
 	def teleopInit(self):
@@ -150,7 +158,7 @@ class Robot(wpilib.IterativeRobot):
 	def teleopPeriodic(self):
 		forward = self.controller.getY(0)
 		angle = self.controller.getX(1)
-		self.drive.arcadeDrive(forward*0.75, angle*0.75)
+		self.drive.arcadeDrive(forward*0.65, angle*0.65)
 
 		suck = self.controller.getTriggerAxis(0)
 		out = -self.controller.getTriggerAxis(1)
@@ -278,8 +286,6 @@ class Robot(wpilib.IterativeRobot):
 		self.game_data = wpilib.DriverStation.getInstance().getGameSpecificMessage()
 		self.switch = self.game_data[0]
 		self.position = self.dash.getString("position", "none")
-		self.open_read()
-		self.read()
 
 	"""
 	Either determine which autonomous to execute given the position in NetworkTables
@@ -287,14 +293,16 @@ class Robot(wpilib.IterativeRobot):
 	"""
 	def autonomousPeriodic(self):
 
+		"""
 		if (self.forward_iteration < len(self.forward_powers)) and (self.angle_iteration < len(self.angle_powers)):
 			self.drive.arcadeDrive(self.forward_powers[self.forward_iteration], self.angle_powers[self.angle_iteration])
 			self.forward_iteration += 1
 			self.angle_iteration += 1
 		else:
 			self.drive.arcadeDrive(0.0, 0.0)
+		"""
 
-		"""if self.position == "solid":
+		if self.position == "solid":
 			if self.timer.get() < 3:
 				self.drive.arcadeDrive(-0.5, 0.0)
 			else:
@@ -318,7 +326,7 @@ class Robot(wpilib.IterativeRobot):
 			self.left_left()
 
 		if (self.position == "right" and self.switch == "L") or (self.position == "left" and self.switch == "R"):
-			self.go_to_autoline()"""
+			self.go_to_autoline()
 
 	"""
 	run once at the start of test mode. Reset and open files to write
