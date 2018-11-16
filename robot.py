@@ -82,11 +82,6 @@ class Robot(wpilib.IterativeRobot):
 		self.l_encoder.reset()
 		self.r_encoder.reset()
 		self.timer.reset()
-		self.forward_data = None
-		self.angle_data = None
-		self.forward_iteration = 0
-		self.angle_iteration = 0
-		self.powers = None
 		for stage in self.right_center_auto:
 			stage.lock = "locked"
 		for stage in self.left_center_auto:
