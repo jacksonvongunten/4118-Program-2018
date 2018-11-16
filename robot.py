@@ -72,17 +72,6 @@ class Robot(wpilib.IterativeRobot):
 		"""
 		self.dash.putString("position", "none")
 
-		"""
-		Necessary components for writing and reading from text files for PhaseAlpha
-		recorder.
-		"""
-		self.forward_data = None
-		self.angle_data = None
-		self.forward_iteration = 0
-		self.angle_iteration = 0
-		self.forward_powers = None
-		self.angle_powers = None
-
 	"""
 	This function resets everything to it's default values as if the robot was just
 	rebooted
@@ -104,48 +93,6 @@ class Robot(wpilib.IterativeRobot):
 			stage.lock = "locked"
 		self.forward_auto.lock = "locked"
 
-	"""
-	open files to write
-	"""
-	"""
-	def open_write(self):
-		self.forward_data = open("/home/lvuser/forward_data.txt", "w")
-		self.angle_data = open("/home/lvuser/angle_data.txt", "w")
-	"""
-
-	"""
-	write data to a file
-	"""
-	"""
-	def write(self, forward, angle):
-		self.forward_data.write(str(forward) + "\n")
-		self.angle_data.write(str(angle) + "\n")
-	"""
-
-	"""
-	open files to read
-	"""
-	"""
-	def open_read(self):
-		self.forward_data = open("/home/lvuser/forward_data.txt", "r")
-		self.angle_data = open("/home/lvuser/angle_data.txt", "r")
-	"""
-
-	"""
-	actually read from files
-	"""
-	"""
-	def read(self):
-		self.forward_powers = self.forward_data.read().splitlines()
-		self.angle_powers = self.angle_data.read().splitlines()
-
-		for i in range(len(self.forward_powers)):
-			self.forward_powers[i] = float(self.forward_powers[i])
-
-		for i in range(len(self.angle_powers)):
-			self.angle_powers[i] = float(self.angle_powers[i])
-
-	"""
 	"""
 	run whenever teleop starts
 	"""
@@ -292,16 +239,6 @@ class Robot(wpilib.IterativeRobot):
 	or simply playback a recording determined in "test" mode (see below)
 	"""
 	def autonomousPeriodic(self):
-
-		"""
-		if (self.forward_iteration < len(self.forward_powers)) and (self.angle_iteration < len(self.angle_powers)):
-			self.drive.arcadeDrive(self.forward_powers[self.forward_iteration], self.angle_powers[self.angle_iteration])
-			self.forward_iteration += 1
-			self.angle_iteration += 1
-		else:
-			self.drive.arcadeDrive(0.0, 0.0)
-		"""
-
 		if self.position == "solid":
 			if self.timer.get() < 3:
 				self.drive.arcadeDrive(-0.5, 0.0)
@@ -327,34 +264,6 @@ class Robot(wpilib.IterativeRobot):
 
 		if (self.position == "right" and self.switch == "L") or (self.position == "left" and self.switch == "R"):
 			self.go_to_autoline()
-
-	"""
-	run once at the start of test mode. Reset and open files to write
-	"""
-	def testInit(self):
-		self.reset()
-		self.open_write()
-
-	"""
-	Same a teleop minus we actually record values this time around
-	"""
-	def testPeriodic(self):
-		forward = self.controller.getY(0)
-		angle = self.controller.getX(1)
-		angle *= 0.75
-		self.drive.arcadeDrive(forward, angle)
-		self.write(forward, angle)
-
-		suck = self.controller.getTriggerAxis(0)
-		out = -self.controller.getTriggerAxis(1)
-
-		if (suck != 0):
-			self.roller.set(suck)
-		elif (out != 0):
-			self.roller.set(out)
-		else:
-			self.roller.set(0)
-
 
 
 """
